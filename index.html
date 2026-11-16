@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Tower of Hell — Browser Clone</title>
+<meta name="description" content="A fan-made browser clone of the Roblox obby Tower of Hell: a procedurally generated tower, rising lava, checkpoints and coins. Built with three.js." />
+<meta property="og:title" content="Tower of Hell — Browser Clone" />
+<meta property="og:description" content="Climb the procedural tower before the lava catches you." />
+<meta name="theme-color" content="#14060c" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2314060c'/%3E%3Cpath d='M32 6 52 18v28L32 58 12 46V18z' fill='%23ff3b30'/%3E%3Cpath d='M32 18 42 24v16L32 46 22 40V24z' fill='%23ffcc00'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<canvas id="scene"></canvas>
+
+<!-- HUD -->
+<div id="hud" class="hidden">
+  <div class="hud-left">
+    <div class="pill time"><span id="timer">0:00.00</span></div>
+    <div class="pill small"><span id="sectionLabel">SECTION 1 / 30</span></div>
+  </div>
+  <div class="hud-right">
+    <div class="pill coin">🪙 <span id="coins">0</span></div>
+    <div class="pill small"><span id="bestLabel">BEST —</span></div>
+  </div>
+  <div id="lavaWarn"><span>LAVA RISING</span><div class="lava-bar"><i id="lavaFill"></i></div></div>
+  <div id="hint">WASD move · SPACE jump · drag mouse to look · R respawn</div>
+  <div id="checkpointToast">CHECKPOINT</div>
+</div>
+
+<!-- MENU -->
+<div id="menu" class="screen">
+  <div class="panel menu-panel">
+    <div class="logo">
+      <span class="logo-tower"></span>
+      <h1>TOWER<span> OF </span>HELL</h1>
+      <p class="tag">a browser obby · fan clone</p>
+    </div>
+    <button id="playBtn" class="btn primary">PLAY</button>
+    <div class="controls">
+      <div><b>WASD</b> move</div>
+      <div><b>SPACE</b> jump</div>
+      <div><b>MOUSE</b> orbit camera</div>
+      <div><b>R</b> back to checkpoint</div>
+    </div>
+    <p class="rules">Climb 30 procedurally generated sections. The lava never stops rising.
+      Grab the cyan pads for checkpoints and every coin you can reach.</p>
+    <div class="stats-row" id="menuStats"></div>
+    <p class="disclaimer">Fan-made clone built with original assets. Not affiliated with Roblox Corporation or the original Tower of Hell creators.</p>
+  </div>
+</div>
+
+<!-- DEATH -->
+<div id="dead" class="screen hidden">
+  <div class="panel dead-panel">
+    <div class="skull">☠</div>
+    <h2 id="deadTitle">YOU DIED</h2>
+    <p id="deadSub">Respawning at your last checkpoint…</p>
+    <div class="stats-row" id="deadStats"></div>
+    <button id="deadBtn" class="btn ghost hidden">BACK TO MENU</button>
+  </div>
+</div>
+
+<!-- WIN -->
+<div id="win" class="screen hidden">
+  <div class="panel win-panel">
+    <div class="trophy">🏆</div>
+    <h2>TOWER CONQUERED</h2>
+    <p id="winSub">You beat the lava.</p>
+    <div class="stats-row" id="winStats"></div>
+    <button id="againBtn" class="btn primary">CLIMB AGAIN</button>
+  </div>
+</div>
+
+<!-- touch controls -->
+<div id="touch" class="hidden">
+  <div id="stick"><i></i></div>
+  <button id="jumpBtn">JUMP</button>
+</div>
+
+<div id="rotate-warning">Rotate your phone to landscape for the best view.</div>
+
+<script src="vendor/three.min.js"></script>
+<script src="js/util.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/input.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/level.js"></script>
+<script src="js/player.js"></script>
+<script src="js/lava.js"></script>
+<script src="js/game.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
