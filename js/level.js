@@ -179,19 +179,24 @@
     }
 
     tplConveyor(api) {
-      const push = api.rnd() > 0.5 ? 1 : -1;
-      const zs = [-4.5, 0, 4.0];
-      for (let i = 0; i < 3; i++) {
-        const y = 1.6 + i * 1.7;
-        const col = api.plat(0, y, zs[i], 8.2, 3.0, '#2b3138',
-          { h: 0.7, route: true, conveyor: { x: (i % 2 === 0 ? 1 : -1) * push * 4.4, z: 0 } });
-        col.mesh.material = new THREE.MeshLambertMaterial({ map: T.conveyorTexture('#2b3138', 'x') });
-        if (i < 2) api.coin(2.2, y + 1.5, zs[i]);
-      }
-      for (let i = 0; i < 5; i++) {
-        const a = (i * Math.PI) / 2.4;
-        const y = 6.3 + i * 0.98;
-        api.plat(Math.cos(a) * 6.0, y, Math.sin(a) * 6.0, 2.6, 2.6, api.pick(), { h: 1.0, route: true });
+      // spiral of pads where every other pad is a belt dragging you sideways
+      const dir = api.rnd() > 0.5 ? 1 : -1;
+      const n = 8;
+      const radius = 5.4;
+      const start = api.rnd() * Math.PI * 2;
+      for (let i = 0; i < n; i++) {
+        const a = start + dir * (i * (Math.PI * 1.9)) / (n - 1);
+        const y = 1.7 + (i * (10.2 - 1.7)) / (n - 1);
+        const belt = i % 2 === 1;
+        const col = api.plat(Math.cos(a) * radius, y, Math.sin(a) * radius, 2.9, 2.9,
+          belt ? '#2b3138' : api.pick(), { h: 1.0, route: true });
+        if (belt) {
+          const tx = -Math.sin(a) * dir, tz = Math.cos(a) * dir;
+          col.conveyor = { x: tx * 3.0, z: tz * 3.0 };
+          col.mesh.material = new THREE.MeshLambertMaterial({ map: T.conveyorTexture('#2b3138', Math.abs(tx) > Math.abs(tz) ? 'x' : 'z') });
+          this.conveyors.push(col);
+        }
+        if (i % 3 === 0) api.coin(Math.cos(a) * radius, y + 1.5, Math.sin(a) * radius);
       }
     }
 
@@ -364,6 +369,16 @@
         const dx = Math.max(0, Math.abs(p.x) - (p.w + T.PAD) / 2);
         const dz = Math.max(0, Math.abs(p.z) - (p.d + T.PAD) / 2);
         if (dx === 0 && dz === 0 && p.yTop > T.PAD_TOP && p.yTop < T.PAD_TOP + 2.15) return fail('pad-headroom');
+      }
+      // nothing wide may hang over the spawn pad inside jump height (you must be able to jump off it)
+      for (const c of section.colliders) {
+        if (c.noStand || c.knock || c.kill) continue;
+        const top = c.top - section.baseY, bottom = c.bottom - section.baseY;
+        if (Math.abs(top - T.PAD_TOP) < 0.02) continue;
+        if (top < T.PAD_TOP) continue;
+        if (bottom > 4.95) continue;
+        if (c.hx <= 1.9 && c.hz <= 1.9) continue;
+        if (Math.abs(c.cx) < c.hx + T.PAD / 2 && Math.abs(c.cz) < c.hz + T.PAD / 2) return fail('pad-jump-clearance');
       }
       // every landing spot needs head room above it
       for (const p of route) {

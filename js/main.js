@@ -17,6 +17,14 @@
   T.player = player;
   T.lava = lava;
 
+  // corporate panels: 1/2/3 open staff/market/ranks, Escape closes
+  window.addEventListener('keydown', (e) => {
+    if (e.code === 'Digit1' || e.code === 'Numpad1') game.toggleDrawer('staff');
+    else if (e.code === 'Digit2' || e.code === 'Numpad2') game.toggleDrawer('market');
+    else if (e.code === 'Digit3' || e.code === 'Numpad3') game.toggleDrawer('ranks');
+    else if (e.code === 'Escape' && game.drawerTab) game.toggleDrawer(null);
+  });
+
   function step(dt) {
     game.update(dt);
     engine.updateCamera(dt, player.pos, game.level, lava.y);
@@ -145,6 +153,34 @@
     get game() { return game; },
     get lava() { return lava; },
     get engine() { return engine; },
+    // ---- corporate test hooks ----
+    get economy() { return game.economy; },
+    get market() { return game.market; },
+    get npcs() { return game.npcs.npcs; },
+    money() {
+      const e = game.economy;
+      return { cash: +e.cash.toFixed(2), netWorth: +e.netWorth().toFixed(2), idle: +e.idleRate().toFixed(3), rank: e.rank, rankName: e.rankName() };
+    },
+    hire(id) { const ok = game.economy.hire(id); game.syncCorpHud(); return ok; },
+    buy(id, qty) { return game.market.buy(id, qty || 1); },
+    sellAll(id) { return game.market.sell(id, game.market.shares(id)); },
+    give(n) { game.economy.earn(n); game.economy.checkPromotion(); game.syncCorpHud(); return this.money(); },
+    openTab(t) { game.toggleDrawer(t); return game.drawerTab; },
+    drawerHtml() { return game.el.drawerBody.innerHTML.length; },
+    toastCount() { return document.querySelectorAll('#toasts .toast').length; },
+    npcInfo() {
+      return game.npcs.npcs.map((n) => ({ id: n.id, name: n.name, section: n.section, y: +n.y.toFixed(1), met: n.met, reward: n.reward }));
+    },
+    greetNearest(dx) {
+      const p = player;
+      const best = game.npcs.nearest(p.pos.x, p.pos.y + 1, p.pos.z);
+      if (!best.npc) return null;
+      const n = best.npc;
+      const d = Math.hypot(p.pos.x - n.x, p.pos.y - n.y, p.pos.z - n.z);
+      if (d > (dx || 3)) return null;
+      if (!n.met) { n.met = true; game.greetNpc(n); }
+      return n.id;
+    },
     T,
   };
 

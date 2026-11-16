@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-<title>Tower of Hell — Browser Clone</title>
-<meta name="description" content="A fan-made browser clone of the Roblox obby Tower of Hell: a procedurally generated tower, rising lava, checkpoints and coins. Built with three.js." />
-<meta property="og:title" content="Tower of Hell — Browser Clone" />
-<meta property="og:description" content="Climb the procedural tower before the lava catches you." />
+<title>Corporate Empire — climb the tower, run the company</title>
+<meta name="description" content="A browser game: climb a lava-filled tower while your corporate empire runs itself. Fake stock market, idle staff income, promotions and NPC coworkers. Fan-made, original assets, three.js." />
+<meta property="og:title" content="Corporate Empire" />
+<meta property="og:description" content="Climb the tower. Run the company. Out-earn the lava." />
 <meta name="theme-color" content="#14060c" />
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2314060c'/%3E%3Cpath d='M32 6 52 18v28L32 58 12 46V18z' fill='%23ff3b30'/%3E%3Cpath d='M32 18 42 24v16L32 46 22 40V24z' fill='%23ffcc00'/%3E%3C/svg%3E" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2314060c'/%3E%3Cpath d='M32 6 52 18v28L32 58 12 46V18z' fill='%23ff3b30'/%3E%3Ctext x='32' y='44' font-size='30' text-anchor='middle' fill='%23ffcc00' font-family='sans-serif' font-weight='bold'%3E%24%3C/text%3E%3C/svg%3E" />
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -20,34 +20,70 @@
     <div class="pill time"><span id="timer">0:00.00</span></div>
     <div class="pill small"><span id="sectionLabel">SECTION 1 / 30</span></div>
   </div>
+
+  <div class="hud-top">
+    <div class="corp">
+      <div class="cashline">
+        <span class="cash" id="cash">$25</span>
+        <span class="income" id="income">+$0/s</span>
+      </div>
+      <div class="rankline">
+        <span class="rankname" id="rankName">Intern</span>
+        <div class="rankbar"><i id="rankFill"></i></div>
+        <span class="ranknext" id="rankNext">$200</span>
+      </div>
+    </div>
+  </div>
+
   <div class="hud-right">
     <div class="pill coin">🪙 <span id="coins">0</span></div>
     <div class="pill small"><span id="bestLabel">BEST —</span></div>
   </div>
+
+  <div id="tabs">
+    <button type="button" data-tab="staff">STAFF</button>
+    <button type="button" data-tab="market">MARKET</button>
+    <button type="button" data-tab="ranks">RANKS</button>
+  </div>
+
   <div id="lavaWarn"><span>LAVA RISING</span><div class="lava-bar"><i id="lavaFill"></i></div></div>
-  <div id="hint">WASD move · SPACE jump · drag mouse to look · R respawn</div>
+  <div id="hint">WASD move · SPACE jump · drag to look · 1 2 3 panels</div>
   <div id="checkpointToast">CHECKPOINT</div>
 </div>
+
+<!-- SIDE PANEL -->
+<aside id="drawer" class="hidden">
+  <header>
+    <h3 id="drawerTitle">Staff</h3>
+    <button type="button" id="drawerClose" aria-label="close">✕</button>
+  </header>
+  <div id="drawerBody"></div>
+</aside>
+
+<div id="toasts"></div>
 
 <!-- MENU -->
 <div id="menu" class="screen">
   <div class="panel menu-panel">
     <div class="logo">
       <span class="logo-tower"></span>
-      <h1>TOWER<span> OF </span>HELL</h1>
-      <p class="tag">a browser obby · fan clone</p>
+      <h1>CORPORATE<span>EMPIRE</span></h1>
+      <p class="tag">climb the tower · run the company</p>
     </div>
-    <button id="playBtn" class="btn primary">PLAY</button>
+    <button id="playBtn" class="btn primary">CLOCK IN</button>
     <div class="controls">
       <div><b>WASD</b> move</div>
       <div><b>SPACE</b> jump</div>
       <div><b>MOUSE</b> orbit camera</div>
-      <div><b>R</b> back to checkpoint</div>
+      <div><b>1 2 3</b> staff · market · ranks</div>
     </div>
-    <p class="rules">Climb 30 procedurally generated sections. The lava never stops rising.
-      Grab the cyan pads for checkpoints and every coin you can reach.</p>
+    <p class="rules">Climb 30 floors before the lava catches you. Every floor pays a salary,
+      your staff keeps earning while you climb (even offline), and the stock market never sleeps.
+      Net-worth milestones get you promoted — all the way to CEO. Coworkers on the tower hand out
+      bonuses, and the CEO is waiting at the top.</p>
     <div class="stats-row" id="menuStats"></div>
-    <p class="disclaimer">Fan-made clone built with original assets. Not affiliated with Roblox Corporation or the original Tower of Hell creators.</p>
+    <p class="disclaimer">Fan-made browser game with original assets. Not affiliated with Roblox Corporation
+      or the creators of Tower of Hell. Nothing here is financial advice — the lava is real, the stock is not.</p>
   </div>
 </div>
 
@@ -89,6 +125,9 @@
 <script src="js/level.js"></script>
 <script src="js/player.js"></script>
 <script src="js/lava.js"></script>
+<script src="js/economy.js"></script>
+<script src="js/market.js"></script>
+<script src="js/npc.js"></script>
 <script src="js/game.js"></script>
 <script src="js/main.js"></script>
 </body>
